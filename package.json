@@ -5,5 +5,8 @@
     "author": "Craig Morten <craig.morten@mclaren.com>",
     "dependencies": {
         "csvtojson": "^1.1.9"
+    },
+    "scripts": {
+        "start": "node ./scripts/generateTimeline.js"
     }
 }

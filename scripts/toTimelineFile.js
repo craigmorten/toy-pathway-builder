@@ -6,7 +6,8 @@
 
 const fs = require('fs');
 const parsed = require('./parsed.js');
-const writeFilePath = '../data/timeline.json';
+const writeFilePath = './src/timeline.js';
+const writeFilePathJson = './data/timeline.json';
 
 const admissionDates = parsed.AdmissionsDates();
 const admissionCodes = parsed.AdmissionCodes();
@@ -110,74 +111,80 @@ function newTimelineDate() {
     };
 }
 
-/**
- * Main functionality loop
- */
+module.exports = {
+    run: () => {
+        for (let patientID in admissionDates) {
+            timelines[patientID] = timelines[patientID] || {};
 
-for (let patientID in admissionDates) {
-    timelines[patientID] = timelines[patientID] || {};
+            let timeline = timelines[patientID];
 
-    let timeline = timelines[patientID];
+            // Admissions and all data containing an admission code but no date
+            for (let admission of admissionDates[patientID]) {
+                const startDate = timestamp(admission.AdmissionStartDate);
+                const endDate = timestamp(admission.AdmissionEndDate);
 
-    // Admissions and all data containing an admission code but no date
-    for (let admission of admissionDates[patientID]) {
-        const startDate = timestamp(admission.AdmissionStartDate);
-        const endDate = timestamp(admission.AdmissionEndDate);
+                if (!timeline[startDate]) {
+                    timeline[startDate] = newTimelineDate();
+                }
+                timeline[startDate].events.push(newAdmissionEvent(patientID, admission));
 
-        if (!timeline[startDate]) {
-            timeline[startDate] = newTimelineDate();
+                if (!timeline[endDate]) {
+                    timeline[endDate] = newTimelineDate();
+                }
+                timeline[endDate].events.push(newReleaseEvent(patientID, admission));
+            }
+
+            // CCI
+            for (let cci of cciData[patientID]) {
+                const date = timestamp(cci.Date);
+
+                if (!timeline[date]) {
+                    timeline[date] = newTimelineDate();
+                }
+                timeline[date].events.push(newCCIEvent(patientID, cci));
+            }
+
+            // Measurements
+            for (let measurement of measurements[patientID]) {
+                const date = timestamp(measurement.LabDateTime);
+
+                if (!timeline[date]) {
+                    timeline[date] = newTimelineDate();
+                }
+                timeline[date].events.push(newMeasurementEvent(patientID, measurement));
+            }
+
+            // Questionaires
+            for (let questionaire of questionaires[patientID]) {
+                const date = timestamp(questionaire.Date);
+
+                if (!timeline[date]) {
+                    timeline[date] = newTimelineDate();
+                }
+                timeline[date].events.push(newQuestionaireEvent(patientID, questionaire));
+            }
+
+            // Physio sessions
+            for (let physio of physioSessions[patientID]) {
+                const date = timestamp(physio.Date);
+
+                if (!timeline[date]) {
+                    timeline[date] = newTimelineDate();
+                }
+                timeline[date].events.push(newPhysioEvent(patientID, physio));
+            }
         }
-        timeline[startDate].events.push(newAdmissionEvent(patientID, admission));
 
-        if (!timeline[endDate]) {
-            timeline[endDate] = newTimelineDate();
-        }
-        timeline[endDate].events.push(newReleaseEvent(patientID, admission));
+        fs.writeFileSync(writeFilePathJson, JSON.stringify(timelines), (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+
+        fs.writeFileSync(writeFilePath, `const timeline = ${JSON.stringify(timelines)};`, (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
     }
-
-    // CCI
-    for (let cci of cciData[patientID]) {
-        const date = timestamp(cci.Date);
-
-        if (!timeline[date]) {
-            timeline[date] = newTimelineDate();
-        }
-        timeline[date].events.push(newCCIEvent(patientID, cci));
-    }
-
-    // Measurements
-    for (let measurement of measurements[patientID]) {
-        const date = timestamp(measurement.LabDateTime);
-
-        if (!timeline[date]) {
-            timeline[date] = newTimelineDate();
-        }
-        timeline[date].events.push(newMeasurementEvent(patientID, measurement));
-    }
-
-    // Questionaires
-    for (let questionaire of questionaires[patientID]) {
-        const date = timestamp(questionaire.Date);
-
-        if (!timeline[date]) {
-            timeline[date] = newTimelineDate();
-        }
-        timeline[date].events.push(newQuestionaireEvent(patientID, questionaire));
-    }
-
-    // Physio sessions
-    for (let physio of physioSessions[patientID]) {
-        const date = timestamp(physio.Date);
-
-        if (!timeline[date]) {
-            timeline[date] = newTimelineDate();
-        }
-        timeline[date].events.push(newPhysioEvent(patientID, physio));
-    }
-}
-
-fs.writeFileSync(writeFilePath, JSON.stringify(timelines), (err) => {
-    if (err) {
-        console.log(err);
-    }
-});
+};
