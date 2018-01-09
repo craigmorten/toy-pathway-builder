@@ -1,0 +1,92 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    overflow-x: scroll;
+}
+
+h1 {
+    font-size: 16px;
+}
+
+.node {
+    cursor: pointer;
+}
+
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 3px;
+}
+
+.node text {
+    font: 12px sans-serif;
+}
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+    cursor: pointer;
+}
+
+.backward {
+    fill: none;
+    stroke: rgb(154, 81, 250);
+    stroke-width: 2px;
+}
+
+.svg-div {
+    vertical-align: bottom;
+    position:relative;
+}
+
+.patient-selector {
+    font-size: 16px;
+    width: 300px;
+    margin: 10px 0;
+}
+
+.container {
+    width: 100%;
+    overflow-y: auto;
+    border: 1px solid #111;
+    padding: 0;
+    margin: 0;
+    border-radius: 10px;
+}
+
+.tag {
+    margin: auto;
+    width: 300px;
+    height: auto;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #111;
+    font-size: 14px;
+    padding: 4px;
+    box-sizing: border-box;
+    position: absolute;
+    overflow-y: scroll;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    background: rgb(230, 248, 255);
+}
+
+.tag-list {
+    text-align: left;
+    margin: auto;
+    width: 250px;
+}
+
+.tag.bottom {
+    bottom: 0;
+}
+
+.tag ol {
+    padding-left: 20px;
+}
+
+.tag ol li {
+    list-style-position: outside;
+    margin-bottom: 10px;
+}

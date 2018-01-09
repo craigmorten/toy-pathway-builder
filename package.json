@@ -1,0 +1,9 @@
+{
+    "name": "toy-pathway-builder",
+    "version": "0.0.1",
+    "description": "A toy project for creating pathways from csv files.",
+    "author": "Craig Morten <craig.morten@mclaren.com>",
+    "dependencies": {
+        "csvtojson": "^1.1.9"
+    }
+}
